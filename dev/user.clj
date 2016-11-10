@@ -54,23 +54,24 @@
 
 ;; (reset)
 
-(metrica.graphite/publish (:graphite user/system) "project.fssdf" "metric"
-                          100
-                          (-> (java.util.Date.) (.getTime) (/ 1000) (int)))
+;; (defn now []
+;;   (-> (java.util.Date.) (.getTime) (/ 1000) (int)))
+
+;; (metrica.graphite/publish (:graphite user/system)
+;;                           [["project.box.metric1" 100 (now)]])
 
 ;; (start)
 
 ;; (stop)
 
+(get-in user/system [:etl :graphite])
 
-;; (def r (load-repo "/Users/alguevara/dev/kijijica/kijiji.ca"))
+(def r (load-repo "/Users/alguevara/dev/kijijica/kijiji.ca"))
 
-;; (def data (metrica.etl/git->graphite (:etl user/system)
-;;                r
-;;                "9e8258d02a7668ca35da78213dbbf59dd12114f6"
-;;                "1eca35efd661b7aeb78c5b50581f2a91f75c9a6b"))
-
-;; (-> data first)
+(metrica.etl/git->graphite (:etl user/system)
+               r
+               "9e8258d02a7668ca35da78213dbbf59dd12114f6"
+               "1eca35efd661b7aeb78c5b50581f2a91f75c9a6b")
 
 ;; (bean (-> data first :hash (.getCommitterIdent)))
 

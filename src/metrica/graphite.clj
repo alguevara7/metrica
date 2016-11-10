@@ -5,26 +5,20 @@
            [java.net Socket]
            [java.io PrintWriter]))
 
-;;metrica/{system-name}/{committer}/lines/(added|removed)/{count}
-
 
 ;;echo "local.random.diceroll 4 `date +%s`" | nc -c ${SERVER} ${PORT}
 
-(defn publish [{:keys [host port] :as graphite}
-               project metric value timestamp-seconds]
-  (with-open [socket (Socket. host port)
-              os (.getOutputStream socket)]
-    (binding [*out* (PrintWriter. os)]
-      (println (str project "." metric " " value " " timestamp-seconds)))))
+(defn publish
 
-;; (defn now []
-;;   (int (/ (System/currentTimeMillis) 1000)))
+  ([graphite coll]
+   (doseq [[metric value timestamp-seconds] coll]
+     (publish graphite metric value timestamp-seconds)))
 
-;; (defn write-metric [name value timestamp]
-;;   (with-open [socket (Socket. "localhost" 2003)
-;;               os (.getOutputStream socket)]
-;;     (binding [*out* (PrintWriter. os)]
-;;       (println name value timestamp))))
+  ([{:keys [host port] :as graphite} metric value timestamp-seconds]
+   (with-open [socket (Socket. host port)
+               os (.getOutputStream socket)]
+     (binding [*out* (PrintWriter. os)]
+       (println (str metric " " value " " timestamp-seconds))))))
 
 (defrecord Graphite [host port]
   component/Lifecycle
