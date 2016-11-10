@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="logstash" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        <includeMdc>true</includeMdc>
+        <includeContext>true</includeContext>
+        <customFields>{"appname":"metrica"}</customFields>
+      </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="logstash"/>
+    </root>
+
+</configuration>

@@ -1,0 +1,7 @@
+graphite:
+  image: sitespeedio/graphite:latest
+  ports:
+    - "8888:80"
+    - "2003:2003"
+  volumes:
+    - /opt/graphite/storage/whisper

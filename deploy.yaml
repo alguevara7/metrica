@@ -1,0 +1,28 @@
+---
+name: 'metrica'
+type: 'service'
+owners:
+    - 'dl-kijiji-tech@ebay.com'
+
+ports:
+    - port: 8080
+      tags:
+        - 'http'
+      discoverable: true
+profiles:
+    production: &production
+        command: 'envconsul-docker -prefix apps/metrica java -Xms256M -Xmx256M -server -XX:+UseConcMarkSweepGC -jar metrica.jar'
+        cpus: 1 # TODO tune this
+        mem: 400 # TODO tune this
+        instances: 2
+        upgradeStrategy:
+            minimumHealthCapacity: 1.0
+        constraints:
+            -
+              - 'hostname'
+              - 'UNIQUE'
+    development:
+        <<: *production
+        command: 'envconsul-docker -prefix apps/metrica java -ea -Xms256M -Xmx256M -server -XX:+UseConcMarkSweepGC -jar metrica.jar'
+        cpus: 0.1
+        instances: 1
