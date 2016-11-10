@@ -50,7 +50,7 @@
   (stop)
   (refresh :after 'user/go))
 
-(go)
+;; (go)
 
 ;; (reset)
 
@@ -64,13 +64,13 @@
 
 ;; (stop)
 
-(get-in user/system [:etl :graphite])
+;; (get-in user/system [:etl :graphite])
 
 (def r (load-repo "/Users/alguevara/dev/kijijica/kijiji.ca"))
 
 (metrica.etl/git->graphite (:etl user/system)
                r
-               "9e8258d02a7668ca35da78213dbbf59dd12114f6"
+               "45a3bef1cccd67ca46d38c3c128a9aa58cda9079"
                "1eca35efd661b7aeb78c5b50581f2a91f75c9a6b")
 
 ;; (bean (-> data first :hash (.getCommitterIdent)))
@@ -88,9 +88,13 @@
 
 ;; (->> r git-log first (.getFullMessage))
 
-;; (->> r git-log first (.getId))
+(->> r git-log first r/reflect :members (map :name))
 
-;; (->> r git-log second (.getAuthorIdent) (.getName))
+(->> r git-log first (.getName))
+
+(->> r git-log second (.getAuthorIdent) (.getEmailAddress))
+
+(re-find #"(.*)@" "agammell@ebay.ca")
 
 ;; (->> r git-log first (.getParents) count)
 

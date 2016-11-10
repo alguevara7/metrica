@@ -5,3 +5,4 @@ graphite:
     - "2003:2003"
   volumes:
     - /opt/graphite/storage/whisper
+    - /opt/graphite/storage/whisper/storage-schemas.conf:/docker/graphite/storage-schemas.conf

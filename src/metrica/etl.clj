@@ -10,26 +10,32 @@
 (defn merge? [c]
   (> (count (.getParents c)) 1))
 
+
+;; de-dup code
 (defn lines-added [diff]
-  (let [lines (line-seq (reader (StringReader. diff)))]
-    (class lines)
-    (-> (filter (partial re-find #"^\+") lines)
-        count)))
+  (if diff
+    (let [lines (line-seq (reader (StringReader. diff)))]
+      (class lines)
+      (-> (filter (partial re-find #"^\+") lines)
+          count))
+    0))
 
 (defn lines-removed [diff]
-  (let [lines (line-seq (reader (StringReader. diff)))]
-    (class lines)
-    (-> (filter (partial re-find #"^\-") lines)
-        count)))
+  (if diff
+    (let [lines (line-seq (reader (StringReader. diff)))]
+      (class lines)
+      (-> (filter (partial re-find #"^\-") lines)
+          count))
+    0))
 
 ;;metrica/{system-name}/{committer}/lines/(added|removed)/{count}
 
-
+;; de-dup code
 (defn- ->lines-added [{:keys [author when lines-added]}]
-  [(str "metrica.box." author ".lines.added" " " lines-added " " (-> when (.getTime) (/ 1000) (int)))])
+  [(str "metrica.box." author ".lines.added" " " lines-added " " (.getTime when))])
 
 (defn- ->lines-removed [{:keys [author when lines-removed]}]
-  [(str "metrica.box." author ".lines.removed" " " lines-removed " " (-> when (.getTime) (/ 1000) (int)))])
+  [(str "metrica.box." author ".lines.removed" " " lines-removed " " (.getTime when))])
 
 (defn git->graphite [{:keys [graphite] :as etl} repo hash-a hash-b]
   (->> (git-log repo hash-a hash-b)
@@ -37,7 +43,7 @@
        (map (juxt identity
                   (partial changed-files-with-patch repo)))
        (map (fn [[c diff]]
-              {:author (-> c (.getAuthorIdent) (.getEmailAddress))
+              {:author (->> c (.getAuthorIdent) (.getEmailAddress) (re-find #"(.*)@") (second))
                :when (-> c (.getAuthorIdent) (.getWhen))
                :lines-added (lines-added diff)
                :lines-removed (lines-removed diff)}))
